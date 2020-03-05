@@ -19,7 +19,7 @@
                   name="att"
                   id="att"
                   autocomplete="given-name"
-                  v-model="item.value"
+                  v-model="form[att]"
                   :disabled="sending"
                 />
                 <span class="md-error" v-if="!$v.form[att].required">Error</span>
@@ -51,12 +51,7 @@ export default {
     formData: Object
   },
   data: () => ({
-    // formData: {
-    //   firstName: {
-    //     label: "First Name",
-    //     value: null
-    //   }
-    // },
+    form: {},
     dataSaved: false,
     sending: false
   }),
@@ -69,7 +64,7 @@ export default {
   },
   methods: {
     getValidationClass(fieldName) {
-      const field = this.$v.form[fieldName].value;
+      const field = this.$v.form[fieldName];
 
       if (field) {
         return {
@@ -92,6 +87,9 @@ export default {
         this.saveUser();
       }
     }
+  },
+  created() {
+    this.form = Object.keys(this.formData);
   }
 };
 </script>

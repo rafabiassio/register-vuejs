@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <form novalidate class="md-layout" @submit.prevent="saveData">
+  <div class="wrapper">
+    <form novalidate class="md-layout wrapper" @submit.prevent="saveData">
       <md-card class="md-layout-item md-size-50 md-small-size-100">
         <md-card-header>
           <div class="md-title">{{ contextLabel }}</div>
@@ -37,7 +37,13 @@
         <md-progress-bar md-mode="indeterminate" v-if="isLoading" />
 
         <md-card-actions>
-          <md-button type="submit" class="md-dense md-raised md-primary" :disabled="isLoading"
+          <md-button
+            class="md-dense md-raised md-accent"
+            :disabled="isLoading"
+            @click="handleCancel"
+            >Cancelar</md-button
+          >
+          <md-button type="submit" class="md-dense md-raised md-primary" :disabled="isLoading || finished"
             >Salvar</md-button
           >
         </md-card-actions>
@@ -70,13 +76,9 @@ export default {
     error: {
       status: false,
       msg: ""
-    }
+    },
+    finished: false
   }),
-  computed: {
-    isEdit() {
-      return this.$route.params.id != null;
-    }
-  },
   methods: {
     clearForm() {
       this.$v.$reset();
@@ -84,55 +86,85 @@ export default {
       this.formData.valoUnitario = null;
     },
     saveData() {
-      if (this.isEdit) {
+      if (this.id) {
         this.$store.dispatch(`product/updateById`, this.formData);
       } else {
         this.$store.dispatch(`product/create`, this.formData);
       }
     },
+    handleCancel() {
+      this.$router.go(-1);
+    },
     watchStore(mutation, state) {
       switch (mutation.type) {
         case "product/loadById":
+          console.log("CALLED");
           this.formData = { ...state.product.single };
           break;
         case "loader/isLoading":
           this.isLoading = state.loader.loading;
           break;
         case "product/dataSaved":
+          console.log("CALLED");
           this.dataSaved = state.product.dataSaved;
-          resetInfo(`product/resetDataSaved`, 5000);
+          resetInfo(`product/resetDataSaved`, 3000);
+          // this.$router.push(`/list/product`);
           break;
         case "product/handleError":
           this.error = { ...state.product.error };
-          resetInfo(`product/resetDataSaved`, 10000);
+          resetInfo(`product/resetErrorStatus`, 5000);
           break;
       }
     }
   },
   created() {
-    if (this.isEdit) {
+    this.$store.subscribe((mutation, state) => {
+      this.watchStore(mutation, state);
+    });
+    if (this.id) {
       this.contextLabel = "Editar produto";
       this.id = this.$route.params.id;
       this.$store.dispatch(`product/getById`, this.id);
-      this.$store.subscribe((mutation, state) => {
-        this.watchStore(mutation, state);
-      });
     } else {
       this.contextLabel = "Cadastrar produto";
+    }
+  },
+  watch: {
+    dataSaved: {
+      immediate: true,
+      handler() {
+        if (this.dataSaved) {
+          this.finished = true;
+        }
+        if (this.finished) {
+          if (!this.dataSaved) {
+            this.$router.push(`/list/product`);
+          }
+        }
+      }
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.wrapper {
+  padding: 1rem;
+}
+.md-card {
+  padding: 2rem;
+}
+.md-card-header {
+  padding-bottom: 1rem;
+}
 .md-progress-bar {
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
 }
-.submit-bnt {
-  width: 6rem;
-  height: 2.5rem;
+.md-card-actions {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

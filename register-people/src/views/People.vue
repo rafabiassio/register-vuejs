@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrapper">
     <form novalidate class="md-layout" @submit.prevent="validateData">
       <md-card class="md-layout-item md-size-50 md-small-size-100">
         <md-card-header>
@@ -11,12 +11,7 @@
             <div class="md-layout-item md-small-size-100">
               <md-field :class="getValidationClass('nome')">
                 <label for="nome">Nome</label>
-                <md-input
-                  name="nome"
-                  id="nome"
-                  v-model="formData.nome"
-                  :disabled="isLoading"
-                />
+                <md-input name="nome" id="nome" v-model="formData.nome" :disabled="isLoading" />
                 <!-- <span class="md-error" v-if="!$v.form.nome.required">O nome é obrigatório</span> -->
               </md-field>
             </div>
@@ -43,9 +38,13 @@
         <md-progress-bar md-mode="indeterminate" v-if="isLoading" />
 
         <md-card-actions>
-          <!-- <Button :type="submit" :label="Salvar" :classType="primary" :disabled="sending" 
-          :class="[submit-bnt]"/> -->
-          <md-button type="submit" class="md-dense md-raised md-primary" :disabled="isLoading"
+          <md-button
+            class="md-dense md-raised md-accent"
+            :disabled="isLoading"
+            @click="handleCancel"
+            >Cancelar</md-button
+          >
+          <md-button type="submit" class="md-dense md-raised md-primary" :disabled="isLoading || finished"
             >Salvar</md-button
           >
         </md-card-actions>
@@ -63,7 +62,7 @@ import { validationMixin } from "vuelidate";
 // import { required } from "vuelidate/lib/validators";
 
 const resetInfo = (type, timeAlive) => {
-  setTimeout(() => {
+  setTimeout(function() {
     this.$store.dispatch(`${type}`);
   }, timeAlive);
 };
@@ -84,7 +83,8 @@ export default {
     error: {
       status: false,
       msg: ""
-    }
+    },
+    finished: false
   }),
   validations: {
     form: {
@@ -93,7 +93,7 @@ export default {
   },
   computed: {
     isEdit() {
-      return this.$route.params.id != null;
+      return Boolean(this.$route.params.id);
     }
   },
   methods: {
@@ -113,7 +113,7 @@ export default {
       this.formData.dataNascimento = null;
     },
     saveData() {
-      if (this.isEdit) {
+      if (this.id) {
         this.$store.dispatch(`people/updateById`, this.formData);
       } else {
         this.$store.dispatch(`people/create`, this.formData);
@@ -128,8 +128,10 @@ export default {
     },
     disabledDates(date) {
       const today = new Date().getTime();
-      debugger;
       return date.getTime() > today;
+    },
+    handleCancel() {
+      this.$router.go(-1);
     },
     watchStore(mutation, state) {
       switch (mutation.type) {
@@ -141,39 +143,63 @@ export default {
           break;
         case "people/dataSaved":
           this.dataSaved = state.people.dataSaved;
-          resetInfo(`people/resetDataSaved`, 5000);
+          resetInfo(`people/resetDataSaved`, 3000);
           break;
         case "people/handleError":
           this.error = { ...state.people.error };
-          resetInfo(`people/resetDataSaved`, 10000);
+          resetInfo(`people/resetErrorStatus`, 5000);
           break;
       }
     }
   },
   created() {
-    if (this.isEdit) {
+    this.$store.subscribe((mutation, state) => {
+      this.watchStore(mutation, state);
+    });
+    if (this.id) {
       this.contextLabel = "Editar pessoa";
       this.id = this.$route.params.id;
       this.$store.dispatch(`people/getById`, this.id);
-      this.$store.subscribe((mutation, state) => {
-        this.watchStore(mutation, state);
-      });
     } else {
       this.contextLabel = "Cadastrar pessoa";
+    }
+  },
+  watch: {
+    dataSaved: {
+      immediate: true,
+      handler() {
+        if (this.dataSaved) {
+          this.finished = true;
+        }
+        if (this.finished) {
+          if (!this.dataSaved) {
+            this.$router.push(`/list/people`);
+          }
+        }
+      }
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.wrapper {
+  padding: 1rem;
+}
+.md-card {
+  padding: 2rem;
+}
+.md-card-header {
+  padding-bottom: 1rem;
+}
 .md-progress-bar {
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
 }
-.submit-bnt {
-  width: 6rem;
-  height: 2.5rem;
+.md-card-actions {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

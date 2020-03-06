@@ -1,16 +1,20 @@
 <template>
   <div>
-    <Table
-      :context="labelContext"
-      :data="tableData"
-      @editItem="editItem"
-      @deleteItem="deleteItem"
-    />
+    <section class="tableWrapper">
+      <Table
+        :context="labelContext"
+        :data="tableData"
+        @editItem="editItem"
+        @deleteItem="deleteItem"
+      />
+    </section>
+    <Button @handleClick="createItem()" classType="fab" icon="add" />
   </div>
 </template>
 
 <script>
 import Table from "@/components/Table.vue";
+import Button from "@/components/Button.vue";
 
 const getLabelContext = context => {
   switch (context) {
@@ -24,7 +28,8 @@ const getLabelContext = context => {
 export default {
   name: "List",
   components: {
-    Table
+    Table,
+    Button
   },
   data: () => ({
     context: "",
@@ -36,6 +41,9 @@ export default {
     }
   },
   methods: {
+    createItem() {
+      this.$router.push(`/${this.context}/0`);
+    },
     editItem(id) {
       this.$router.push(`/${this.context}/${id}`);
     },
@@ -60,3 +68,9 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.tableWrapper {
+  padding: 1rem;
+}
+</style>

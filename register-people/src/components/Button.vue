@@ -1,8 +1,17 @@
 <template>
-  <md-button :class="getStyleClass" @click="onClick" :disabled="disabled" :type="type">
-    <md-icon v-if="showIcon">add</md-icon>
-    {{ !showIcon && label }}
-  </md-button>
+  <div>
+    <md-button
+      v-if="classType === 'fab'"
+      :class="getStyleClass"
+      @click="onClick"
+      :disabled="disabled"
+    >
+      <md-icon>{{ icon }}</md-icon>
+    </md-button>
+    <md-button v-else :class="getStyleClass" @click="onClick" :disabled="disabled">
+      {{ label }}
+    </md-button>
+  </div>
 </template>
 
 <script>
@@ -11,7 +20,7 @@ export default {
     label: String,
     disabled: Boolean,
     classType: String,
-    type: String
+    icon: String
   },
   computed: {
     getStyleClass() {
@@ -37,3 +46,12 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.md-fab {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 2rem;
+  transform: scale(1.25);
+}
+</style>

@@ -1,39 +1,25 @@
 <template>
   <md-card>
-    <md-card-content>
+    <md-card-header>
       <md-field md-clearable class="filter">
         <md-icon>search</md-icon>
         <md-input placeholder="Digite para filtrar..." v-model="search" @input="searchOnTable" />
       </md-field>
-      <md-table v-model="searched" md-sort="name" md-sort-order="asc"  md-fixed-header>
-        <md-table-toolbar>
-        </md-table-toolbar>
+    </md-card-header>
 
-        <md-table-empty-state md-label="Não há dados"> </md-table-empty-state>
-
-        <md-table-row slot="md-table-row" slot-scope="{ item }">
-          <md-table-cell
-            v-for="(value, att) in item"
-            :md-label="att.toUpperCase()"
-            :md-sort-by="att"
-            :key="`${att}-${getRandomKey}`"
-          >
-            {{ value }}
-          </md-table-cell>
-          <md-table-cell md-label="Editar">
-            <Button @handleClick="handleEdit(item.id)" label="Editar" classType="primary" />
-          </md-table-cell>
-          <md-table-cell md-label="Remover">
-            <Button @handleClick="handleDelete(item.id)" label="Deletar" classType="accent" />
-          </md-table-cell>
-        </md-table-row>
-      </md-table>
+    <md-card-content>
+      <md-card>
+        <md-card-content>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio.
+          Dolores, sed accusantium quasi non.
+        </md-card-content>
+      </md-card>
     </md-card-content>
   </md-card>
 </template>
 
 <script>
-import Button from "@/components/Button.vue";
+// import Button from "@/components/Button.vue";
 
 const toLower = text => {
   return text.toString().toLowerCase();
@@ -56,11 +42,12 @@ export default {
     data: Array
   },
   components: {
-    Button
+    // Button
   },
   data: () => ({
     searched: [],
-    search: ""
+    search: "",
+    model: ["id", "nome", "cpf", "data", "editar", "remover"]
   }),
   methods: {
     searchOnTable() {
@@ -91,8 +78,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.md-field {
+.filter {
   width: 100%;
-  margin: 0;
 }
 </style>

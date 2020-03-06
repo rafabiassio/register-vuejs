@@ -14,7 +14,6 @@ Passos para executar o projeto localmente:
 2. **Execute o script para iniciar o projeto.**
 
    ```shell
-# Inicia o projeto Vue.js e também o Json Server (Fake API)
    npm start
    ```
    

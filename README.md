@@ -2,7 +2,7 @@
 
 *É necessário ter o Node e o npm instalados para executar o projeto*
 
-Passos para executar o projeto localmente:
+Passos para executar o projeto localmente (após feito o clone):
 
 1. **Instale as dependências do projeto.**
 

@@ -170,6 +170,48 @@
           "subtotal": 26.64
         }
       ]
+    },
+    {
+      "cliente": {
+        "id": 2,
+        "nome": "cliente 2"
+      },
+      "itens": [
+        {
+          "id": 0,
+          "produto": {
+            "id": 2,
+            "descricao": "produto 2"
+          },
+          "valor": 8.88,
+          "quantidade": "1",
+          "subtotal": 8.88
+        }
+      ],
+      "dataEmissao": "2020-03-06T19:18:02.051Z",
+      "valorTotal": 8.88,
+      "id": 2
+    },
+    {
+      "cliente": {
+        "id": 5,
+        "nome": "teste"
+      },
+      "itens": [
+        {
+          "id": 0,
+          "produto": {
+            "id": 1,
+            "descricao": "produto 1"
+          },
+          "valor": "12",
+          "quantidade": "3",
+          "subtotal": 36
+        }
+      ],
+      "dataEmissao": "2020-03-06T20:19:50.912Z",
+      "valorTotal": 36,
+      "id": 3
     }
   ]
 }

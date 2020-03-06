@@ -22,6 +22,8 @@ const getLabelContext = context => {
       return "Pessoas";
     case "product":
       return "Produtos";
+    case "request":
+      return "Pedidos";
   }
 };
 
@@ -65,7 +67,7 @@ export default {
     this.$store.subscribe((mutation, state) => {
       this.watchStore(mutation, state);
     });
-  }
+  },
 };
 </script>
 

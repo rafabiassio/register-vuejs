@@ -48,7 +48,6 @@ export default {
         await RestRepository("/produtos").update(payload, payload.id);
         context.commit("dataSaved", true);
       } catch (error) {
-        debugger;
         context.commit("handleError", { status: true, msg: error });
       } finally {
         context.commit("loadList", await RestRepository("/produtos").get());

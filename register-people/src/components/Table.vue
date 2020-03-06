@@ -5,11 +5,10 @@
         <md-icon>search</md-icon>
         <md-input placeholder="Digite para filtrar..." v-model="search" @input="searchOnTable" />
       </md-field>
-      <md-table v-model="searched" md-sort="name" md-sort-order="asc"  md-fixed-header>
-        <md-table-toolbar>
-        </md-table-toolbar>
+      <md-table v-model="searched" md-sort="name" md-sort-order="asc" md-fixed-header>
+        <md-table-toolbar> </md-table-toolbar>
 
-        <md-table-empty-state md-label="Não há dados"> </md-table-empty-state>
+        <md-table-empty-state><md-progress-bar md-mode="indeterminate"/></md-table-empty-state>
 
         <md-table-row slot="md-table-row" slot-scope="{ item }">
           <md-table-cell

@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <form novalidate class="md-layout" @submit.prevent="validateData">
-      <md-card class="md-layout-item md-size-50 md-small-size-100">
+      <md-card class="md-layout-item md-small-size-100">
         <md-card-header>
           <div class="md-title">{{ contextLabel }}</div>
         </md-card-header>
@@ -12,15 +12,22 @@
               <md-field :class="getValidationClass('nome')">
                 <label for="nome">Nome</label>
                 <md-input name="nome" id="nome" v-model="formData.nome" :disabled="isLoading" />
-                <!-- <span class="md-error" v-if="!$v.form.nome.required">O nome é obrigatório</span> -->
+                <span class="md-error" v-if="!$v.form.nome.required">O nome é obrigatório</span>
               </md-field>
             </div>
 
             <div class="md-layout-item md-small-size-100">
               <md-field :class="getValidationClass('cpf')">
                 <label for="cpf">CPF</label>
-                <md-input name="cpf" id="cpf" v-model="formData.cpf" :disabled="isLoading" />
-                <!-- <span class="md-error" v-else-if="!$v.form.cpf.minlength">Invalid last name</span> -->
+                <md-input
+                  name="cpf"
+                  id="cpf"
+                  v-model="formData.cpf"
+                  :disabled="isLoading"
+                  maxlength="11"
+                  :md-counter="`${false}`"
+                />
+                <span class="md-error" v-if="!$v.form.cpf.minlength">CPF inválido</span>
               </md-field>
             </div>
           </div>
@@ -31,7 +38,9 @@
               v-model="formData.dataNascimento"
               md-immediately
               :disabled="isLoading"
-            />
+            >
+              <label>Data de nascimento</label>
+            </md-datepicker>
           </div>
         </md-card-content>
 
@@ -44,7 +53,10 @@
             @click="handleCancel"
             >Cancelar</md-button
           >
-          <md-button type="submit" class="md-dense md-raised md-primary" :disabled="isLoading || finished"
+          <md-button
+            type="submit"
+            class="md-dense md-raised md-primary"
+            :disabled="isLoading || finished"
             >Salvar</md-button
           >
         </md-card-actions>
@@ -58,8 +70,8 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-
-// import { required } from "vuelidate/lib/validators";
+import { required, minLength } from "vuelidate/lib/validators";
+// import { validateCPF } from "../utils/validation";
 
 const resetInfo = (type, timeAlive) => {
   setTimeout(function() {
@@ -88,7 +100,14 @@ export default {
   }),
   validations: {
     form: {
-      // nome: required
+      nome: {
+        required
+      },
+      cpf: {
+        required,
+        minLength: minLength(11)
+        // validate: validateCPF()
+      }
     }
   },
   computed: {
@@ -153,15 +172,16 @@ export default {
     }
   },
   created() {
+    this.$store.dispatch(`loader/setContextTitle`, 'Cadastro de Clientes');
     this.$store.subscribe((mutation, state) => {
       this.watchStore(mutation, state);
     });
     if (this.id) {
-      this.contextLabel = "Editar pessoa";
+      this.contextLabel = "Editar cliente";
       this.id = this.$route.params.id;
       this.$store.dispatch(`people/getById`, this.id);
     } else {
-      this.contextLabel = "Cadastrar pessoa";
+      this.contextLabel = "Cadastrar cliente";
     }
   },
   watch: {

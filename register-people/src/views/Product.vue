@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <form novalidate class="md-layout wrapper" @submit.prevent="saveData">
-      <md-card class="md-layout-item md-size-50 md-small-size-100">
+      <md-card class="md-layout-item md-small-size-100">
         <md-card-header>
           <div class="md-title">{{ contextLabel }}</div>
         </md-card-header>
@@ -118,6 +118,7 @@ export default {
     }
   },
   created() {
+    this.$store.dispatch(`loader/setContextTitle`, 'Cadastro de Produtos');
     this.$store.subscribe((mutation, state) => {
       this.watchStore(mutation, state);
     });

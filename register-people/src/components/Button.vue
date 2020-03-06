@@ -1,5 +1,5 @@
 <template>
-  <md-button :class="getStyleClass" @click="onClick" :disabled="disabled">
+  <md-button :class="getStyleClass" @click="onClick" :disabled="disabled" :type="type">
     <md-icon v-if="showIcon">add</md-icon>
     {{ !showIcon && label }}
   </md-button>
@@ -11,10 +11,7 @@ export default {
     label: String,
     disabled: Boolean,
     classType: String,
-    onClick: {
-      type: Function,
-      required: true
-    }
+    type: String
   },
   computed: {
     getStyleClass() {
@@ -31,6 +28,11 @@ export default {
     },
     showIcon() {
       return this.$props.classType === "fab";
+    }
+  },
+  methods: {
+    onClick(value) {
+      this.$emit("handleClick", value);
     }
   }
 };

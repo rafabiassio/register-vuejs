@@ -3,8 +3,6 @@
     <img alt="Vue logo" src="../assets/logo.png" />
     <HelloWorld msg="Welcome to Your Vue.js App" />
     <!-- <Table context="Pessoas" :tableData="users" /> -->
-    <Form :formData="form" />
-    <Button :onClick="handleClick" label="Click me" :disabled="block" classType="primary" />
   </div>
 </template>
 
@@ -12,16 +10,12 @@
 // @ is an alias to /src
 import HelloWorld from "@/components/HelloWorld.vue";
 // import Table from "@/components/Table.vue";
-import Form from "@/components/Form.vue";
-import Button from "@/components/Button.vue";
 
 export default {
   name: "Home",
   components: {
-    HelloWorld,
+    HelloWorld
     // Table,
-    Form,
-    Button
   },
   methods: {
     handleClick() {

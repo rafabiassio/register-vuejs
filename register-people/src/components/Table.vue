@@ -11,11 +11,7 @@
       </md-field>
     </md-table-toolbar>
 
-    <md-table-empty-state
-      md-label="`No '${context.toLowerCase()}' found`"
-      :md-description="`No '${context.toLowerCase()}' found for this '${search}' query.`"
-    >
-    </md-table-empty-state>
+    <md-table-empty-state md-label="Não há dados"> </md-table-empty-state>
 
     <md-table-row slot="md-table-row" slot-scope="{ item }">
       <md-table-cell
@@ -26,11 +22,19 @@
       >
         {{ value }}
       </md-table-cell>
+      <md-table-cell md-label="Editar">
+        <Button @handleClick="handleEdit(item.id)" label="Editar" classType="primary" />
+      </md-table-cell>
+      <md-table-cell md-label="Remover">
+        <Button @handleClick="handleDelete(item.id)" label="Deletar" classType="accent" />
+      </md-table-cell>
     </md-table-row>
   </md-table>
 </template>
 
 <script>
+import Button from "@/components/Button.vue";
+
 const toLower = text => {
   return text.toString().toLowerCase();
 };
@@ -48,23 +52,40 @@ const searchByName = (items, term) => {
 export default {
   name: "Table",
   props: {
-    tableData: Array,
-    context: String
+    context: String,
+    data: Array
+  },
+  components: {
+    Button
   },
   data: () => ({
     searched: [],
-    search: null,
+    search: ""
   }),
   methods: {
     searchOnTable() {
-      this.searched = searchByName(this.tableData, this.search);
+      this.searched = searchByName(this.data, this.search);
     },
     getRandomKey() {
       return Math.floor(Math.random() * (1000 - 1 + 1)) + 1;
+    },
+    handleEdit(id) {
+      this.$emit("editItem", id);
+    },
+    handleDelete(id) {
+      this.$emit("deleteItem", id);
     }
   },
   created() {
-    this.searched = this.tableData;
+    this.searchOnTable();
+  },
+  watch: {
+    data: {
+      immediate: true,
+      handler() {
+        this.searchOnTable();
+      }
+    }
   }
 };
 </script>

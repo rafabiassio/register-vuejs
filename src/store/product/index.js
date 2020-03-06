@@ -18,6 +18,9 @@ export default {
     },
     single: state => {
       return state.single;
+    },
+    quantity: state => {
+      return state.content.length || 0;
     }
   },
   mutations: {

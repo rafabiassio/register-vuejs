@@ -13,11 +13,14 @@ export default {
     }
   },
   getters: {
-    peoples: state => {
+    products: state => {
       return state.content;
     },
     single: state => {
       return state.single;
+    },
+    quantity: state => {
+      return state.content.length || 0;
     }
   },
   mutations: {
@@ -38,38 +41,56 @@ export default {
   },
   actions: {
     getList: async context => {
-      context.commit("loadList", await RestRepository("/pessoas").get());
+      context.commit("loadList", await RestRepository("/pedidos").get());
     },
     getById: async (context, id) => {
-      context.commit("loadById", await RestRepository("/pessoas").getById(id));
+      context.commit("loadById", await RestRepository("/pedidos").getById(id));
     },
     updateById: async (context, payload) => {
       try {
-        await RestRepository("/pessoas").update(payload, payload.id);
+        const data = {
+          id: payload.id,
+          cliente: {
+            id: payload.cliente.id,
+            nome: payload.cliente.nome
+          }
+        };
+        await RestRepository("/pedidos").update(data, data.id);
         context.commit("dataSaved", true);
       } catch (error) {
         context.commit("handleError", { status: true, msg: error });
       } finally {
-        context.commit("loadList", await RestRepository("/pessoas").get());
+        context.commit("loadList", await RestRepository("/pedidos").get());
       }
     },
     create: async (context, payload) => {
       try {
-        await RestRepository("/pessoas").create(payload);
+        const data = {
+          ...payload,
+          cliente: {
+            id: payload.cliente.id,
+            nome: payload.cliente.nome
+          },
+          dataEmissao: new Date(),
+          valorTotal: payload.itens.reduce((sum, item) => {
+            return sum + item.subtotal;
+          }, 0)
+        };
+        await RestRepository("/pedidos").create(data);
         context.commit("dataSaved", true);
       } catch (error) {
         context.commit("handleError", { status: true, msg: error });
       } finally {
-        context.commit("loadList", await RestRepository("/pessoas").get());
+        context.commit("loadList", await RestRepository("/pedidos").get());
       }
     },
     delete: async (context, id) => {
       try {
-        await RestRepository("/pessoas").remove(id);
+        await RestRepository("/pedidos").remove(id);
       } catch (error) {
         // context.commit("handleError", { status: true, msg: error });
       } finally {
-        context.commit("loadList", await RestRepository("/pessoas").get());
+        context.commit("loadList", await RestRepository("/pedidos").get());
       }
     },
     resetDataSaved: context => {

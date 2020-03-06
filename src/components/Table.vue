@@ -20,10 +20,10 @@
             {{ value }}
           </md-table-cell>
           <md-table-cell md-label="Editar">
-            <Button @handleClick="handleEdit(item.id)" label="Editar" classType="primary" />
+            <Button @handleClick="handleEdit(item.id)" label="Editar" classType="icon-primary" icon="edit"/>
           </md-table-cell>
           <md-table-cell md-label="Remover">
-            <Button @handleClick="handleDelete(item.id)" label="Deletar" classType="accent" />
+            <Button @handleClick="handleDelete(item.id)" label="Deletar" classType="icon-accent" icon="delete"/>
           </md-table-cell>
         </md-table-row>
       </md-table>

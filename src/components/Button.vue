@@ -8,6 +8,9 @@
     >
       <md-icon>{{ icon }}</md-icon>
     </md-button>
+    <md-button v-else-if="classType.includes('icon')" :class="getStyleClass" @click="onClick" :disabled="disabled">
+      <md-icon>{{ icon }}</md-icon>
+    </md-button>
     <md-button v-else :class="getStyleClass" @click="onClick" :disabled="disabled">
       {{ label }}
     </md-button>
@@ -31,13 +34,14 @@ export default {
           return "md-dense md-raised md-accent";
         case "fab":
           return "md-fab md-primary";
+        case "icon-primary":
+          return "md-raised md-primary";
+        case "icon-accent":
+          return "md-raised md-accent";
         default:
           return "md-raised";
       }
     },
-    showIcon() {
-      return this.$props.classType === "fab";
-    }
   },
   methods: {
     onClick(value) {

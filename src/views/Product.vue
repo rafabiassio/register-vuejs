@@ -43,7 +43,10 @@
             @click="handleCancel"
             >Cancelar</md-button
           >
-          <md-button type="submit" class="md-dense md-raised md-primary" :disabled="isLoading || finished"
+          <md-button
+            type="submit"
+            class="md-dense md-raised md-primary"
+            :disabled="isLoading || finished"
             >Salvar</md-button
           >
         </md-card-actions>
@@ -98,14 +101,12 @@ export default {
     watchStore(mutation, state) {
       switch (mutation.type) {
         case "product/loadById":
-          console.log("CALLED");
           this.formData = { ...state.product.single };
           break;
         case "loader/isLoading":
           this.isLoading = state.loader.loading;
           break;
         case "product/dataSaved":
-          console.log("CALLED");
           this.dataSaved = state.product.dataSaved;
           resetInfo(`product/resetDataSaved`, 3000);
           // this.$router.push(`/list/product`);
@@ -118,14 +119,15 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch(`loader/setContextTitle`, 'Cadastro de Produtos');
+    const hrefId = window.location.href.split("product/")[1];
+    this.$store.dispatch(`loader/setContextTitle`, "Cadastro de Produtos");
     this.$store.subscribe((mutation, state) => {
       this.watchStore(mutation, state);
     });
-    if (this.id) {
-      this.contextLabel = "Editar produto";
-      this.id = this.$route.params.id;
+    if (Number(hrefId)) {
+      this.id = hrefId;
       this.$store.dispatch(`product/getById`, this.id);
+      this.contextLabel = "Editar produto";
     } else {
       this.contextLabel = "Cadastrar produto";
     }

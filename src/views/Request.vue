@@ -22,7 +22,10 @@
             </md-select>
           </md-field>
 
-          <md-card v-for="itemId in selectdItens" :key="itemId.id" class="itemCard">
+          <md-card v-for="itemId in selectdItens" :key="itemId" class="itemCard">
+            <span class="deleteCard">
+              <Button @handleClick="removeItem(itemId)" classType="icon-flat" icon="close" />
+            </span>
             <md-card-content>
               <div class="md-title">{{ getProduct(itemId).descricao }}</div>
               <md-field>
@@ -69,6 +72,7 @@
 </template>
 
 <script>
+import Button from "@/components/Button.vue";
 import { validationMixin } from "vuelidate";
 
 const resetInfo = (type, timeAlive) => {
@@ -80,6 +84,9 @@ const resetInfo = (type, timeAlive) => {
 export default {
   name: "Request",
   mixins: [validationMixin],
+  components: {
+    Button
+  },
   data: () => ({
     contextLabel: "",
     id: null,
@@ -87,10 +94,11 @@ export default {
       cliente: null,
       itens: []
     },
-    selectdItens: [],
-    products: [],
-    quantityItens: {},
+    // for Autocomplete and select
     clients: [],
+    products: [],
+    selectdItens: [],
+    quantityItens: {},
     pureData: {
       people: []
     },
@@ -121,10 +129,10 @@ export default {
     parseFormData() {
       const data = { ...this.formData };
       data.cliente = this.pureData.people.find(people => people.id == data.cliente[0]);
-      data.itens = this.selectdItens.map((itemId, index) => {
+      data.itens = this.selectdItens.map(itemId => {
         const item = this.getProduct(itemId);
         return {
-          id: index,
+          // id: index,
           produto: {
             id: item.id,
             descricao: item.descricao
@@ -139,7 +147,7 @@ export default {
     saveData() {
       const parsedData = this.parseFormData();
       if (this.id) {
-        this.parsedData.id = this.id;
+        parsedData.id = this.id;
         this.$store.dispatch(`request/updateById`, parsedData);
       } else {
         this.$store.dispatch(`request/create`, parsedData);
@@ -147,6 +155,19 @@ export default {
     },
     handleCancel() {
       this.$router.go(-1);
+    },
+    populateForm(data) {
+      const toForm = {
+        ...data,
+        cliente: `${data.cliente.id} - ${data.cliente.nome}`,
+        itens: []
+      };
+      this.formData = { ...toForm };
+      this.selectdItens = data.itens.map(item => {
+        const itemId = item.produto.id;
+        this.quantityItens[itemId] = item.quantidade;
+        return itemId;
+      });
     },
     watchStore(mutation, state) {
       switch (mutation.type) {
@@ -158,7 +179,7 @@ export default {
           this.products = state.product.content;
           break;
         case "request/loadById":
-          this.formData = { ...state.request.single };
+          this.populateForm(state.request.single);
           break;
         case "loader/isLoading":
           this.isLoading = state.loader.loading;
@@ -178,19 +199,24 @@ export default {
     },
     getProduct(itemId) {
       return this.products.find(product => product.id == itemId);
+    },
+    removeItem(itemId) {
+      this.selectdItens = this.selectdItens.filter(item => item != itemId);
+      delete this.quantityItens[itemId];
     }
   },
   created() {
+    const hrefId = window.location.href.split("request/")[1];
     this.$store.dispatch(`loader/setContextTitle`, "Cadastro de Pedidos");
     this.$store.dispatch(`people/getList`);
     this.$store.dispatch(`product/getList`);
     this.$store.subscribe((mutation, state) => {
       this.watchStore(mutation, state);
     });
-    if (this.id) {
-      this.contextLabel = "Editar pedido";
-      this.id = this.$route.params.id;
+    if (Number(hrefId)) {
+      this.id = hrefId;
       this.$store.dispatch(`request/getById`, this.id);
+      this.contextLabel = "Editar pedido";
     } else {
       this.contextLabel = "Cadastrar pedido";
     }
@@ -205,6 +231,17 @@ export default {
         if (this.finished) {
           if (!this.dataSaved) {
             this.$router.push(`/list/request`);
+          }
+        }
+      }
+    },
+    selectdItens: {
+      immediate: true,
+      handler() {
+        if (this.selectdItens && this.selectdItens.length > 0) {
+          const emptyValues = this.selectdItens.filter(selected => !this.quantityItens[selected]);
+          for (let i = 0; i < emptyValues.length; i++) {
+            this.quantityItens[emptyValues[i]] = 1;
           }
         }
       }
@@ -236,5 +273,12 @@ export default {
 .itemCard {
   padding: unset;
   margin-bottom: 1.5rem;
+  position: relative;
+}
+.deleteCard {
+  position: absolute;
+  top: 0.25rem;
+  right: 0;
+  cursor: pointer;
 }
 </style>

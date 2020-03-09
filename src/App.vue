@@ -4,7 +4,12 @@
       <md-button class="md-icon-button" @click="showNavigation = true">
         <md-icon>menu</md-icon>
       </md-button>
-      <span class="md-title">Loja</span>
+      <router-link to="/">
+        <span class="md-title">
+        <md-icon>home</md-icon>
+          Loja
+        </span>
+      </router-link>
     </md-toolbar>
 
     <md-drawer :md-active.sync="showNavigation" md-swipeable>
@@ -15,42 +20,42 @@
       <md-list>
         <md-list-item>
           <md-icon>view_list</md-icon>
-          <span class="md-list-item-text">
+          <span @click="showNavigation = false" class="md-list-item-text">
             <router-link to="/list/people">Listar Clientes</router-link>
           </span>
         </md-list-item>
 
         <md-list-item>
           <md-icon>view_list</md-icon>
-          <span class="md-list-item-text">
+          <span @click="showNavigation = false" class="md-list-item-text">
             <router-link to="/list/product">Listar Produtos</router-link>
           </span>
         </md-list-item>
 
         <md-list-item>
           <md-icon>view_list</md-icon>
-          <span class="md-list-item-text">
+          <span @click="showNavigation = false" class="md-list-item-text">
             <router-link to="/list/request">Listar Pedidos</router-link>
           </span>
         </md-list-item>
 
         <md-list-item>
           <md-icon>person_add</md-icon>
-          <span class="md-list-item-text">
+          <span @click="showNavigation = false" class="md-list-item-text">
             <router-link to="/people/0">Cadastrar Clientes</router-link>
           </span>
         </md-list-item>
 
         <md-list-item>
           <md-icon>note_add</md-icon>
-          <span class="md-list-item-text">
+          <span @click="showNavigation = false" class="md-list-item-text">
             <router-link to="/product/0">Cadastrar Produtos</router-link>
           </span>
         </md-list-item>
 
         <md-list-item>
           <md-icon>playlist_add</md-icon>
-          <span class="md-list-item-text">
+          <span @click="showNavigation = false" class="md-list-item-text">
             <router-link to="/request/0">Cadastrar Pedidos</router-link>
           </span>
         </md-list-item>

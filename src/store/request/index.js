@@ -49,11 +49,15 @@ export default {
     updateById: async (context, payload) => {
       try {
         const data = {
+          ...payload,
           id: payload.id,
           cliente: {
             id: payload.cliente.id,
             nome: payload.cliente.nome
-          }
+          },
+          valorTotal: payload.itens.reduce((sum, item) => {
+            return sum + item.subtotal;
+          }, 0)
         };
         await RestRepository("/pedidos").update(data, data.id);
         context.commit("dataSaved", true);

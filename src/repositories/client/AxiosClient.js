@@ -1,13 +1,12 @@
 import axios from "axios";
 import store from "@/store";
 
-const baseURL = "http://localhost:3000";
+const baseURL = process.env.VUE_APP_DB_HOST;
 
 const http = axios.create({
   baseURL,
   headers: {
     "Content-Type": "application/json"
-    // "Authorization": "Bearer xxxxx"
   }
 });
 

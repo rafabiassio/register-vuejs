@@ -56,7 +56,7 @@ export default {
       const contextList = `${this.context}/loadList`;
       switch (mutation.type) {
         case contextList:
-          this.tableData = [...state[`${this.context}`].content];
+          this.tableData = (state[`${this.context}`] && state[`${this.context}`].content) || []
           break;
       }
     }

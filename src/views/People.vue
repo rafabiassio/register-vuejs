@@ -11,7 +11,7 @@
             <div class="md-layout-item md-small-size-100">
               <md-field :class="getValidationClass('nome')">
                 <label for="nome">Nome</label>
-                <md-input name="nome" id="nome" v-model="formData.nome" :disabled="isLoading" />
+                <md-input name="nome" id="nome" v-model="form.nome" :disabled="isLoading" />
                 <span class="md-error" v-if="!$v.form.nome.required">O nome é obrigatório</span>
               </md-field>
             </div>
@@ -22,12 +22,13 @@
                 <md-input
                   name="cpf"
                   id="cpf"
-                  v-model="formData.cpf"
+                  v-model="form.cpf"
                   :disabled="isLoading"
                   maxlength="11"
                   :md-counter="`${false}`"
                 />
-                <span class="md-error" v-if="!$v.form.cpf.minlength">CPF inválido</span>
+                <!-- <span class="md-error" v-if="!$v.form.cpf.minlength">CPF inválido</span> -->
+                <span class="md-error" v-if="!$v.form.cpf.validateCPF">CPF inválido</span>
               </md-field>
             </div>
           </div>
@@ -35,7 +36,7 @@
           <div class="md-layout md-gutter">
             <md-datepicker
               id="dataNascimento"
-              v-model="formData.dataNascimento"
+              v-model="form.dataNascimento"
               md-immediately
               :disabled="isLoading"
             >
@@ -70,8 +71,8 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import { required, minLength } from "vuelidate/lib/validators";
-// import { validateCPF } from "../utils/validation";
+import { required } from "vuelidate/lib/validators";
+import { validateCPF } from "../utils/validation";
 
 const resetInfo = (type, timeAlive) => {
   setTimeout(function() {
@@ -85,7 +86,7 @@ export default {
   data: () => ({
     contextLabel: "",
     id: null,
-    formData: {
+    form: {
       nome: null,
       cpf: null,
       dataNascimento: null
@@ -105,8 +106,7 @@ export default {
       },
       cpf: {
         required,
-        minLength: minLength(11)
-        // validate: validateCPF()
+        validateCPF
       }
     }
   },
@@ -127,15 +127,15 @@ export default {
     },
     clearForm() {
       this.$v.$reset();
-      this.formData.nome = null;
-      this.formData.cpf = null;
-      this.formData.dataNascimento = null;
+      this.form.nome = null;
+      this.form.cpf = null;
+      this.form.dataNascimento = null;
     },
     saveData() {
       if (this.id) {
-        this.$store.dispatch(`people/updateById`, this.formData);
+        this.$store.dispatch(`people/updateById`, this.form);
       } else {
-        this.$store.dispatch(`people/create`, this.formData);
+        this.$store.dispatch(`people/create`, this.form);
       }
     },
     validateData() {
@@ -155,7 +155,7 @@ export default {
     watchStore(mutation, state) {
       switch (mutation.type) {
         case "people/loadById":
-          this.formData = { ...state.people.single };
+          this.form = { ...state.people.single };
           break;
         case "loader/isLoading":
           this.isLoading = state.loader.loading;
@@ -172,14 +172,15 @@ export default {
     }
   },
   created() {
+    const hrefId = window.location.href.split('people/')[1]
     this.$store.dispatch(`loader/setContextTitle`, 'Cadastro de Clientes');
     this.$store.subscribe((mutation, state) => {
       this.watchStore(mutation, state);
     });
-    if (this.id) {
-      this.contextLabel = "Editar cliente";
-      this.id = this.$route.params.id;
+    if (Number(hrefId)) {
+      this.id = hrefId;
       this.$store.dispatch(`people/getById`, this.id);
+      this.contextLabel = "Editar cliente";
     } else {
       this.contextLabel = "Cadastrar cliente";
     }

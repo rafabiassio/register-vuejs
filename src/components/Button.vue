@@ -38,6 +38,8 @@ export default {
           return "md-raised md-primary";
         case "icon-accent":
           return "md-raised md-accent";
+        case "icon-flat":
+          return "md-icon-button"
         default:
           return "md-raised";
       }

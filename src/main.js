@@ -6,12 +6,14 @@ import store from './store';
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
+import VueAnalytics from 'vue-analytics'
 
 Vue.use(VueMaterial)
 
 Vue.config.productionTip = false;
 
-new Vue({
+new Vue(VueAnalytics, {
+  id: 'UA-129313249-1',
   router,
   store,
   render: (h) => h(App),
